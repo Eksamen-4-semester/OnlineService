@@ -6,6 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
     var connectionString =
@@ -30,6 +33,9 @@ builder.Services.AddScoped<IVideoRepository, VideoRepositoryMongoDb>();
 builder.Services.AddScoped<ITrainingProgramRepository, TrainingProgramRepositoryMongoDb>();
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthorization();
 
