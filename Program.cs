@@ -1,8 +1,12 @@
 using MongoDB.Driver;
 using OnlineService.Repositories;
 using OnlineService.Repositories.Interfaces;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
 
 builder.Services.AddControllers();
 
@@ -33,6 +37,9 @@ builder.Services.AddScoped<IVideoRepository, VideoRepositoryMongoDb>();
 builder.Services.AddScoped<ITrainingProgramRepository, TrainingProgramRepositoryMongoDb>();
 
 var app = builder.Build();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("OnlineService started");
 
 app.UseSwagger();
 app.UseSwaggerUI();
