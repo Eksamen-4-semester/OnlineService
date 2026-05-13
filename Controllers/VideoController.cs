@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineService.Models;
 using OnlineService.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OnlineService.Controllers;
 
+
+[Authorize]
 [ApiController]
 [Route("api/videos")]
 public class VideoController : ControllerBase
