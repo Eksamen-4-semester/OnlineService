@@ -17,5 +17,7 @@ public class TrainingProgram
 
     public int DurationWeeks { get; set; }
 
+    public string TrainerId { get; set; } = string.Empty;
+
     public List<string> Exercises { get; set; } = new();
 }

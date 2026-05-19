@@ -23,13 +23,14 @@ public class VideoRepositoryMongoDb : IVideoRepository
         return await _videos.Find(v => v.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<bool> UploadVideo(VideoDto dto)
+    public async Task<bool> UploadVideo(VideoDto dto, string trainerId)    
     {
         var video = new Video
         {
             Title = dto.Title,
             Description = dto.Description,
             FileName = dto.VideoFile?.FileName ?? string.Empty,
+            TrainerId = trainerId,
             UploadDate = DateTime.UtcNow
         };
 

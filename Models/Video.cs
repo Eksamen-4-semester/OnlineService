@@ -15,5 +15,7 @@ public class Video
 
     public string FileName { get; set; } = string.Empty;
 
+    public string TrainerId { get; set; } = string.Empty;
+
     public DateTime UploadDate { get; set; }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineService.Models;
 using OnlineService.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace OnlineService.Controllers;
 
@@ -49,6 +50,7 @@ public class VideoController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,PersonalTrainer")]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> UploadVideo([FromForm] VideoDto dto)
     {
@@ -60,14 +62,24 @@ public class VideoController : ControllerBase
             return BadRequest("Video file is required");
         }
 
-        await _videoRepository.UploadVideo(dto);
+        var trainerId = User.FindFirst("userId")?.Value
+                        ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        _logger.LogInformation("Video uploaded: {Title}", dto.Title);
+        if (string.IsNullOrWhiteSpace(trainerId))
+        {
+            _logger.LogWarning("Upload failed: trainer id missing from token");
+            return Unauthorized("TrainerId missing from token");
+        }
+
+        await _videoRepository.UploadVideo(dto, trainerId);
+
+        _logger.LogInformation("Video uploaded: {Title} by trainer {TrainerId}", dto.Title, trainerId);
 
         return Created();
     }
 
     [HttpDelete("{videoId}")]
+    [Authorize(Roles = "Admin,PersonalTrainer")]
     public async Task<IActionResult> DeleteVideo(string videoId)
     {
         _logger.LogInformation("Delete request received for video: {VideoId}", videoId);

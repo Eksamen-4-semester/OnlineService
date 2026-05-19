@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineService.Models;
 using OnlineService.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace OnlineService.Controllers;
 
@@ -48,6 +49,7 @@ public class TrainingProgramController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,PersonalTrainer")]
     public async Task<IActionResult> CreateTrainingProgram([FromBody] TrainingProgramDto dto)
     {
         _logger.LogInformation("Create training program request received: {Title}", dto.Title);
@@ -58,14 +60,28 @@ public class TrainingProgramController : ControllerBase
             return BadRequest("Title is required");
         }
 
-        await _trainingProgramRepository.CreateTrainingProgram(dto);
+        var trainerId = User.FindFirst("userId")?.Value
+                        ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        _logger.LogInformation("Training program created: {Title}", dto.Title);
+        if (string.IsNullOrWhiteSpace(trainerId))
+        {
+            _logger.LogWarning("Training program creation failed: trainer id missing from token");
+            return Unauthorized("TrainerId missing from token");
+        }
+
+        await _trainingProgramRepository.CreateTrainingProgram(dto, trainerId);
+
+        _logger.LogInformation(
+            "Training program created: {Title} by trainer {TrainerId}",
+            dto.Title,
+            trainerId
+        );
 
         return Created();
     }
-
+    
     [HttpDelete("{programId}")]
+    [Authorize(Roles = "Admin,PersonalTrainer")]
     public async Task<IActionResult> DeleteTrainingProgram(string programId)
     {
         _logger.LogInformation("Delete request received for training program: {ProgramId}", programId);

@@ -27,8 +27,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         ?? "THIS_IS_A_DEVELOPMENT_SECRET_KEY_CHANGE_ME_12345"
                     )
                 ),
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer = "AuthService",
+            ValidAudience = "User",
             ClockSkew = TimeSpan.Zero
         };
     });

@@ -23,7 +23,7 @@ public class TrainingProgramRepositoryMongoDb : ITrainingProgramRepository
         return await _trainingPrograms.Find(p => p.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<bool> CreateTrainingProgram(TrainingProgramDto dto)
+    public async Task<bool> CreateTrainingProgram(TrainingProgramDto dto, string trainerId)   
     {
         var trainingProgram = new TrainingProgram
         {
@@ -31,6 +31,7 @@ public class TrainingProgramRepositoryMongoDb : ITrainingProgramRepository
             Description = dto.Description,
             DifficultyLevel = dto.DifficultyLevel,
             DurationWeeks = dto.DurationWeeks,
+            TrainerId = trainerId,
             Exercises = dto.Exercises
         };
 

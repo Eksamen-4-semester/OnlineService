@@ -8,7 +8,6 @@ public interface ITrainingProgramRepository
 
     Task<TrainingProgram?> GetTrainingProgramById(string id);
 
-    Task<bool> CreateTrainingProgram(TrainingProgramDto dto);
-
+    Task<bool> CreateTrainingProgram(TrainingProgramDto dto, string trainerId);
     Task<bool> DeleteTrainingProgram(string id);
 }
